@@ -1,30 +1,28 @@
 #!/usr/bin/env node
 
-import { spawnSync } from 'child_process';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { spawnSync } from "child_process";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PROJECT_ROOT = resolve(__dirname, '..');
+const PROJECT_ROOT = resolve(__dirname, "..");
 
 // Platform mapping: CLI name -> directory name + auth key
 const PLATFORMS = {
-  bilibili: { dir: 'Bilibili', authKey: 'bilibili' },
-  douyin: { dir: 'Douyin', authKey: 'douyin' },
-  kuaishou: { dir: 'Kuaishou', authKey: 'kuaishou' },
-  rednote: { dir: 'RedNote', authKey: 'rednote' },
-  weixin: { dir: 'WeixinVideo', authKey: 'weixin' },
-  youtube: { dir: 'YouTube', authKey: 'youtube' },
+  bilibili: { dir: "Bilibili", authKey: "bilibili" },
+  douyin: { dir: "Douyin", authKey: "douyin" },
+  kuaishou: { dir: "Kuaishou", authKey: "kuaishou" },
+  weixin: { dir: "WeixinVideo", authKey: "weixin" },
+  youtube: { dir: "YouTube", authKey: "youtube" },
 };
 
-const ACTIONS = ['login', 'upload'];
+const ACTIONS = ["login", "upload"];
 
 // Platform aliases
 const ALIASES = {
-  xiaohongshu: 'rednote',
-  weixinvideo: 'weixin',
-  wechat: 'weixin',
-  yt: 'youtube',
+  weixinvideo: "weixin",
+  wechat: "weixin",
+  yt: "youtube",
 };
 
 /**
@@ -36,10 +34,10 @@ const ALIASES = {
  */
 function specFile(platform, action) {
   const info = PLATFORMS[platform];
-  if (platform === 'weixin') {
+  if (platform === "weixin") {
     return `automations/${info.dir}/${action}-weixin-video.spec.ts`;
   }
-  if (action === 'upload') {
+  if (action === "upload") {
     return `automations/${info.dir}/upload-video.spec.ts`;
   }
   return `automations/${info.dir}/${action}-${platform}.spec.ts`;
@@ -51,13 +49,13 @@ function specFile(platform, action) {
 function parseArgs(argv) {
   const args = argv.slice(2);
 
-  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+  if (args.length === 0 || args[0] === "--help" || args[0] === "-h") {
     printHelp();
     process.exit(0);
   }
 
   if (args.length < 2) {
-    console.error('Error: Missing arguments. Usage: pva <platform> <action>');
+    console.error("Error: Missing arguments. Usage: pva <platform> <action>");
     process.exit(1);
   }
 
@@ -71,28 +69,44 @@ function parseArgs(argv) {
   // Validate platform
   if (!PLATFORMS[rawPlatform]) {
     console.error(`Error: Unknown platform "${rawPlatform}".`);
-    console.error(`Valid platforms: ${Object.keys(PLATFORMS).join(', ')}`);
+    console.error(`Valid platforms: ${Object.keys(PLATFORMS).join(", ")}`);
     process.exit(1);
   }
 
   // Validate action
   if (!ACTIONS.includes(action)) {
-    console.error(`Error: Unknown action "${action}". Use "login" or "upload".`);
+    console.error(
+      `Error: Unknown action "${action}". Use "login" or "upload".`,
+    );
     process.exit(1);
   }
 
   // Parse upload options into env vars
   const env = { ...process.env };
-  if (action === 'upload') {
+  if (action === "upload") {
     for (let i = 0; i < extra.length; i++) {
       switch (extra[i]) {
-        case '--video':   env.VIDEO_PATH     = extra[++i]; break;
-        case '--title':   env.VIDEO_TITLE    = extra[++i]; break;
-        case '--desc':    env.VIDEO_DESC     = extra[++i]; break;
-        case '--tags':    env.VIDEO_TAGS     = extra[++i]; break;
-        case '--cover':   env.VIDEO_COVER    = extra[++i]; break;
-        case '--privacy': env.VIDEO_PRIVACY  = extra[++i]; break;
-        case '--headless': env.PVA_HEADLESS  = '1'; break;
+        case "--video":
+          env.VIDEO_PATH = extra[++i];
+          break;
+        case "--title":
+          env.VIDEO_TITLE = extra[++i];
+          break;
+        case "--desc":
+          env.VIDEO_DESC = extra[++i];
+          break;
+        case "--tags":
+          env.VIDEO_TAGS = extra[++i];
+          break;
+        case "--cover":
+          env.VIDEO_COVER = extra[++i];
+          break;
+        case "--privacy":
+          env.VIDEO_PRIVACY = extra[++i];
+          break;
+        case "--headless":
+          env.PVA_HEADLESS = "1";
+          break;
         default:
           console.error(`Error: Unknown option "${extra[i]}".`);
           process.exit(1);
@@ -107,11 +121,10 @@ function printHelp() {
   console.log(`
 Usage: pva <platform> <action> [options]
 
-Platforms: bilibili, douyin, kuaishou, rednote, weixin, youtube
+Platforms: bilibili, douyin, kuaishou, weixin, youtube
 Actions:   login, upload
 
 Aliases:
-  xiaohongshu -> rednote
   weixinvideo, wechat -> weixin
   yt -> youtube
 
@@ -135,21 +148,23 @@ function main() {
   const { platform, action, env } = parseArgs(process.argv);
   const info = PLATFORMS[platform];
   const spec = specFile(platform, action);
-  const headed = env.PVA_HEADLESS ? '' : '--headed';
+  const headed = env.PVA_HEADLESS ? "" : "--headed";
 
   console.log(`[pva] Platform: ${info.dir}`);
   console.log(`[pva] Action:   ${action}`);
   console.log(`[pva] Spec:     ${spec}`);
 
   const args = [
-    'playwright', 'test', spec,
-    '--project=chromium',
+    "playwright",
+    "test",
+    spec,
+    "--project=chromium",
     headed,
   ].filter(Boolean);
 
-  const result = spawnSync('npx', args, {
+  const result = spawnSync("npx", args, {
     cwd: PROJECT_ROOT,
-    stdio: 'inherit',
+    stdio: "inherit",
     env,
   });
 
