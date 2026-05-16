@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import path from 'path';
 import { existsSync } from 'fs';
-import { getAuthFilePath } from '../utils/login-helper.ts';
+import { getAuthFilePath } from '../utils/login-helper.js';
 
 /**
  * Auto upload video to Weixin Channel (微信视频号)

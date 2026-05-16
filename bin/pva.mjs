@@ -39,12 +39,12 @@ const ALIASES = {
 function specFile(platform, action) {
   const info = PLATFORMS[platform];
   if (platform === "weixin") {
-    return `automations/${info.dir}/${action}-weixin-video.spec.ts`;
+    return `dist/automations/${info.dir}/${action}-weixin-video.spec.js`;
   }
   if (action === "upload") {
-    return `automations/${info.dir}/upload-video.spec.ts`;
+    return `dist/automations/${info.dir}/upload-video.spec.js`;
   }
-  return `automations/${info.dir}/${action}-${platform}.spec.ts`;
+  return `dist/automations/${info.dir}/${action}-${platform}.spec.js`;
 }
 
 /**

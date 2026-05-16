@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { getAuthFilePath } from '../utils/login-helper.ts';
+import { getAuthFilePath } from '../utils/login-helper.js';
 import path from 'path';
 import { mkdirSync, existsSync, unlinkSync, statSync } from 'fs';
 

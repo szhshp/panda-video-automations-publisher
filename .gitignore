@@ -5,4 +5,5 @@ playwright/.auth/
 playwright/.cache/
 /test-results/
 /playwright-report/
+dist/
 .DS_Store

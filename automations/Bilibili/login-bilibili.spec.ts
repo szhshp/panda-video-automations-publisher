@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { performLogin, getAuthFilePath } from '../utils/login-helper.ts';
+import { performLogin, getAuthFilePath } from '../utils/login-helper.js';
 
 /**
  * Login script for Bilibili

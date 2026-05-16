@@ -1,6 +1,6 @@
 {
   "name": "@panda-video-automation/pva",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Playwright-based video upload automation for Bilibili, Douyin, Kuaishou, Weixin Video, and YouTube",
   "bin": {
     "pva": "./bin/pva.mjs"
@@ -10,12 +10,13 @@
   },
   "files": [
     "bin/",
-    "automations/",
-    "types/",
+    "dist/",
     "playwright.config.mjs",
     "README.md"
   ],
   "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
     "login:bilibili": "pva bilibili login",
     "login:douyin": "pva douyin login",
     "login:kuaishou": "pva kuaishou login",
