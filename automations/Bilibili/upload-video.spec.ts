@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import path from 'path';
 import { existsSync } from 'fs';
-import { getAuthFilePath } from '../utils/login-helper';
+import { getAuthFilePath } from '../utils/login-helper.ts';
 
 /**
  * Auto upload video to Bilibili

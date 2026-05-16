@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import path from 'path';
 import { mkdirSync } from 'fs';
-import { performLogin, getAuthFilePath } from '../utils/login-helper';
+import { performLogin, getAuthFilePath } from '../utils/login-helper.ts';
 
 /**
  * Login script for YouTube

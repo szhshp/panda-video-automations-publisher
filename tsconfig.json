@@ -10,11 +10,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["node"]
+    "types": ["node"],
+    "allowImportingTsExtensions": true
   },
   "include": [
     "automations/**/*.ts",
-    "types/**/*.ts",
-    "playwright.config.ts"
+    "types/**/*.ts"
   ]
 }

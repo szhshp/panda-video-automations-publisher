@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { performLogin, getAuthFilePath } from '../utils/login-helper';
+import { performLogin, getAuthFilePath } from '../utils/login-helper.ts';
 
 /**
  * Login script for Kuaishou (快手)
