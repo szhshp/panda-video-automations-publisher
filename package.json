@@ -1,0 +1,43 @@
+{
+  "name": "@panda-video-automation/pva",
+  "version": "1.0.0",
+  "description": "Playwright-based video upload automation for Bilibili, Douyin, Kuaishou, RedNote, Weixin Video, and YouTube",
+  "type": "module",
+  "bin": {
+    "pva": "./bin/pva.mjs"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "login:bilibili": "pva bilibili login",
+    "login:douyin": "pva douyin login",
+    "login:kuaishou": "pva kuaishou login",
+    "login:rednote": "pva rednote login",
+    "login:weixin": "pva weixin login",
+    "login:youtube": "pva youtube login",
+    "upload:bilibili": "pva bilibili upload",
+    "upload:douyin": "pva douyin upload",
+    "upload:kuaishou": "pva kuaishou upload",
+    "upload:rednote": "pva rednote upload",
+    "upload:weixin": "pva weixin upload",
+    "upload:youtube": "pva youtube upload",
+    "upload:all": "pva bilibili upload && pva douyin upload && pva kuaishou upload && pva rednote upload && pva weixin upload && pva youtube upload",
+    "postinstall": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.58.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.12.14",
+    "typescript": "5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "szhshp",
+    "url": "https://github.com/szhshp"
+  },
+  "license": "MIT"
+}
