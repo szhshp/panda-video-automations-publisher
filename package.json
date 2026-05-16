@@ -1,6 +1,6 @@
 {
   "name": "@panda-video-automation/pva",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Playwright-based video upload automation for Bilibili, Douyin, Kuaishou, Weixin Video, and YouTube",
   "type": "module",
   "bin": {

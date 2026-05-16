@@ -258,5 +258,5 @@ export async function performLogin(
  * Get auth file path for a platform
  */
 export function getAuthFilePath(platform: string): string {
-  return path.join(__dirname, '../../playwright/.auth', `${platform}.json`);
+  return path.join(process.cwd(), 'playwright/.auth', `${platform}.json`);
 }
