@@ -10,14 +10,26 @@
 
 ## 安装
 
+### 通过 npm 全局安装（推荐）
+
 ```bash
-pnpm install
+npm install -g @panda-video-automation/pva
 ```
 
-安装完成后，会自动运行：
+安装完成后，会自动安装 Chromium 浏览器。
+
+### 或作为项目依赖
 
 ```bash
-npx playwright install chromium
+pnpm install @panda-video-automation/pva
+# 或
+npm install @panda-video-automation/pva
+```
+
+### 本地开发
+
+```bash
+pnpm install
 ```
 
 ## 用法

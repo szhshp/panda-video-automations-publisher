@@ -2,18 +2,15 @@ import { test } from '@playwright/test';
 import path from 'path';
 import { existsSync } from 'fs';
 import { getAuthFilePath } from '../utils/login-helper';
-import { UPLOAD_PATHS } from '../../types/paths';
 
 /**
  * Auto upload video to Weixin Channel (微信视频号)
- * Uses Playwright's default setup with saved login state
- * Automatically reads video and title from configured paths (see types/paths.ts)
- * 
- * Usage: 
- *   pnpm upload:weixin-video
- * 
- * Or override with environment variables:
- *   VIDEO_PATH=out/custom.mp4 VIDEO_TITLE="Custom Title" pnpm upload:weixin-video
+ *
+ * Required env vars: VIDEO_PATH, VIDEO_TITLE
+ * Optional env vars: VIDEO_DESC, VIDEO_TAGS, VIDEO_COVER
+ *
+ * Usage:
+ *   VIDEO_PATH=./video.mp4 VIDEO_TITLE="My Title" pva weixin upload
  */
 
 interface UploadConfig {
@@ -22,29 +19,6 @@ interface UploadConfig {
   description?: string;
   tags?: string[];
   coverPath?: string;
-}
-
-// Get video file path (default to fixed filename)
-function getVideoPath(): string {
-  const defaultVideoPath = path.join(process.cwd(), UPLOAD_PATHS.DEFAULT_VIDEO);
-  return process.env.VIDEO_PATH || defaultVideoPath;
-}
-
-// Get title from JSON file or environment
-function getTitleFromJson(): string | null {
-  const titleJsonPath = path.join(process.cwd(), UPLOAD_PATHS.DEFAULT_TITLE_JSON);
-  
-  if (!existsSync(titleJsonPath)) {
-    return null;
-  }
-  
-  try {
-    const fs = require('fs');
-    const titleData = JSON.parse(fs.readFileSync(titleJsonPath, 'utf-8'));
-    return titleData.title || null;
-  } catch (e) {
-    return null;
-  }
 }
 
 /**
@@ -75,28 +49,30 @@ function cleanTitle(title: string): string {
   return cleaned;
 }
 
-// Get upload configuration from environment or defaults
+// Get upload configuration from environment variables only
 function getUploadConfig(): UploadConfig {
-  const videoPath = getVideoPath();
-  
-  if (!videoPath || !existsSync(videoPath)) {
+  const videoPath = process.env.VIDEO_PATH;
+  if (!videoPath) {
     throw new Error(
-      `Video file not found: ${videoPath}\n` +
-      `Please ensure ${UPLOAD_PATHS.DEFAULT_VIDEO} exists or set VIDEO_PATH environment variable.`
+      'VIDEO_PATH is required. Please set it:\n' +
+      '  export VIDEO_PATH=/path/to/video.mp4'
     );
   }
-  
-  // Try to get title from JSON file first, then environment variable
-  let originalTitle = process.env.VIDEO_TITLE || getTitleFromJson();
-  
+  if (!existsSync(videoPath)) {
+    throw new Error(
+      `Video file not found: ${videoPath}\n` +
+      'Please ensure VIDEO_PATH points to an existing file.'
+    );
+  }
+
+  const originalTitle = process.env.VIDEO_TITLE;
   if (!originalTitle) {
     throw new Error(
       'VIDEO_TITLE is required. Please set it:\n' +
-      '  export VIDEO_TITLE="Your Video Title"\n' +
-      `Or ensure ${UPLOAD_PATHS.DEFAULT_TITLE_JSON} exists with a title field.`
+      '  export VIDEO_TITLE="Your Video Title"'
     );
   }
-  
+
   // Clean title: keep only Chinese characters (Simplified and Traditional)
   let cleanedTitle = cleanTitle(originalTitle);
   

@@ -2,19 +2,15 @@ import { test } from '@playwright/test';
 import path from 'path';
 import { existsSync } from 'fs';
 import { getAuthFilePath } from '../utils/login-helper';
-import { UPLOAD_PATHS } from '../../types/paths';
 
 /**
  * Auto upload video to Bilibili
- * Uses Playwright's default setup with saved login state
- * Automatically reads video and title from configured paths (see types/paths.ts)
- * 
- * Usage: 
- *   pnpm upload:bilibili
- * 
- * Or override with environment variables:
- *   VIDEO_PATH=out/custom.mp4 VIDEO_TITLE="Custom Title" pnpm upload:bilibili
- * Cover: output/video/cover.jpg (Cover-Static / PPT-Deck-Cover-Static share this path). Override with VIDEO_COVER.
+ *
+ * Required env vars: VIDEO_PATH, VIDEO_TITLE
+ * Optional env vars: VIDEO_DESC, VIDEO_TAGS, VIDEO_COVER
+ *
+ * Usage:
+ *   VIDEO_PATH=./video.mp4 VIDEO_TITLE="My Title" pva bilibili upload
  */
 
 interface UploadConfig {
@@ -25,64 +21,36 @@ interface UploadConfig {
   coverPath?: string;
 }
 
-// Get video file path (default to fixed filename)
-function getVideoPath(): string {
-  const defaultVideoPath = path.join(process.cwd(), UPLOAD_PATHS.DEFAULT_VIDEO);
-  return process.env.VIDEO_PATH || defaultVideoPath;
-}
-
-// Get title from JSON file or environment
-function getTitleFromJson(): string | null {
-  const titleJsonPath = path.join(process.cwd(), UPLOAD_PATHS.DEFAULT_TITLE_JSON);
-
-  if (!existsSync(titleJsonPath)) {
-    return null;
-  }
-
-  try {
-    const fs = require('fs');
-    const titleData = JSON.parse(fs.readFileSync(titleJsonPath, 'utf-8'));
-    return titleData.title || null;
-  } catch (e) {
-    return null;
-  }
-}
-
-// Get upload configuration from environment or defaults
+// Get upload configuration from environment variables only
 function getUploadConfig(): UploadConfig {
-  const videoPath = getVideoPath();
-
-  if (!videoPath || !existsSync(videoPath)) {
+  const videoPath = process.env.VIDEO_PATH;
+  if (!videoPath) {
+    throw new Error(
+      'VIDEO_PATH is required. Please set it:\n' +
+      '  export VIDEO_PATH=/path/to/video.mp4'
+    );
+  }
+  if (!existsSync(videoPath)) {
     throw new Error(
       `Video file not found: ${videoPath}\n` +
-      `Please ensure ${UPLOAD_PATHS.DEFAULT_VIDEO} exists or set VIDEO_PATH environment variable.`
+      'Please ensure VIDEO_PATH points to an existing file.'
     );
   }
 
-  // Try to get title from JSON file first, then environment variable
-  let title = process.env.VIDEO_TITLE || getTitleFromJson();
-
+  const title = process.env.VIDEO_TITLE;
   if (!title) {
     throw new Error(
       'VIDEO_TITLE is required. Please set it:\n' +
-      '  export VIDEO_TITLE="Your Video Title"\n' +
-      `Or ensure ${UPLOAD_PATHS.DEFAULT_TITLE_JSON} exists with a title field.`
+      '  export VIDEO_TITLE="Your Video Title"'
     );
   }
-
-  const defaultCoverPath = path.join(process.cwd(), UPLOAD_PATHS.DEFAULT_COVER);
-  const coverPath = process.env.VIDEO_COVER
-    ? path.resolve(process.env.VIDEO_COVER)
-    : existsSync(defaultCoverPath)
-      ? path.resolve(defaultCoverPath)
-      : undefined;
 
   const config: UploadConfig = {
     videoPath: path.resolve(videoPath),
     title,
     description: process.env.VIDEO_DESC || '',
     tags: process.env.VIDEO_TAGS ? process.env.VIDEO_TAGS.split(',').map(t => t.trim()) : [],
-    coverPath,
+    coverPath: process.env.VIDEO_COVER ? path.resolve(process.env.VIDEO_COVER) : undefined,
   };
 
   return config;

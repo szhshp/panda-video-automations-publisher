@@ -3,9 +3,13 @@
 import { spawnSync } from "child_process";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
+import { createRequire } from "module";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(__dirname, "..");
+
+const require = createRequire(import.meta.url);
+const PLAYWRIGHT_CLI = require.resolve("@playwright/test/cli");
 
 // Platform mapping: CLI name -> directory name + auth key
 const PLATFORMS = {
@@ -155,14 +159,14 @@ function main() {
   console.log(`[pva] Spec:     ${spec}`);
 
   const args = [
-    "playwright",
+    PLAYWRIGHT_CLI,
     "test",
     spec,
     "--project=chromium",
     headed,
   ].filter(Boolean);
 
-  const result = spawnSync("npx", args, {
+  const result = spawnSync(process.execPath, args, {
     cwd: PROJECT_ROOT,
     stdio: "inherit",
     env,

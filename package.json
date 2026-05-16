@@ -9,6 +9,13 @@
   "engines": {
     "node": ">=20.9.0"
   },
+  "files": [
+    "bin/",
+    "automations/",
+    "types/",
+    "playwright.config.ts",
+    "README.md"
+  ],
   "scripts": {
     "login:bilibili": "pva bilibili login",
     "login:douyin": "pva douyin login",
@@ -33,9 +40,29 @@
   "publishConfig": {
     "access": "public"
   },
+  "preferUnplugged": true,
   "author": {
     "name": "szhshp",
     "url": "https://github.com/szhshp"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/szhshp/panda-video-automations-publisher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/szhshp/panda-video-automations-publisher/issues"
+  },
+  "homepage": "https://github.com/szhshp/panda-video-automations-publisher",
+  "keywords": [
+    "playwright",
+    "video",
+    "upload",
+    "automation",
+    "bilibili",
+    "douyin",
+    "kuaishou",
+    "weixin",
+    "youtube"
+  ],
   "license": "MIT"
 }
