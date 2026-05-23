@@ -1,3 +1,8 @@
+---
+name: publisher
+description: Cross-platform video upload — Bilibili, Douyin, Kuaishou, Weixin Video, YouTube
+---
+
 # Publisher — Cross-platform Video Upload
 
 Upload local video files to multiple video platforms using the `pva` CLI.
