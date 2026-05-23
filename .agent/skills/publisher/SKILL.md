@@ -1,5 +1,5 @@
 ---
-name: publisher
+name: pva-publisher
 description: Cross-platform video upload — Bilibili, Douyin, Kuaishou, Weixin Video, YouTube
 ---
 
