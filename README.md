@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./docs/assets/logo.png" width="200" alt="Panda Video Automation Publisher Logo">
+  <img src="https://raw.githubusercontent.com/szhshp/panda-video-automations-publisher/main/docs/assets/logo.png" width="200" alt="Panda Video Automation Publisher Logo">
 
   # Panda Video Automation Publisher
 
@@ -36,6 +36,17 @@
     </td>
   </tr>
 </table>
+
+---
+
+<a id="demo"></a>
+## ❇️ 功能演示
+
+> 《已开源！视频号多平台发布工具 CLI》
+
+<a href="https://www.bilibili.com/video/BV15ZG766E4g">
+  <img src="https://raw.githubusercontent.com/szhshp/panda-video-automations-publisher/main/docs/assets/video-cover-1.png" alt="功能演示 · 点击在 Bilibili 播放" width="480" />
+</a>
 
 ---
 
