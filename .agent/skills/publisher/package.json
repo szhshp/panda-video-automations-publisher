@@ -1,6 +1,6 @@
 {
   "name": "pva-publisher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cross-platform video upload — Bilibili, Douyin, Kuaishou, Weixin Video, YouTube",
   "skill": "SKILL.md",
   "keywords": ["video", "upload", "publish", "bilibili", "douyin", "kuaishou", "weixin", "youtube"]

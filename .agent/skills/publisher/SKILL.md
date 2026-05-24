@@ -3,95 +3,70 @@ name: pva-publisher
 description: Cross-platform video upload — Bilibili, Douyin, Kuaishou, Weixin Video, YouTube
 ---
 
-# Publisher — Cross-platform Video Upload
+# PVA Publisher
 
-Upload local video files to multiple video platforms using the `pva` CLI.
+Cross-platform video upload using the `pva` CLI tool.
 
-## When to Use
+## Supported Platforms
 
-- After video rendering is complete, automatically distribute to content platforms
-- As the final step in an oral video pipeline, publishing成品 to Bilibili, Douyin, Kuaishou, Weixin Video, and YouTube
+| Platform | Alias | Login | Upload |
+|----------|-------|-------|--------|
+| Bilibili | `bilibili` | `pva bilibili login` | `pva bilibili upload` |
+| Douyin | `douyin` | `pva douyin login` | `pva douyin upload` |
+| Kuaishou | `kuaishou` | `pva kuaishou login` | `pva kuaishou upload` |
+| Weixin Video | `weixin` / `wechat` / `weixinvideo` | `pva weixin login` | `pva weixin upload` |
+| YouTube | `youtube` / `yt` | `pva youtube login` | `pva youtube upload` |
 
-## Prerequisites
+## Upload Options
 
-- Node.js >= 20.9.0
-- `@panda-video-automation/pva` installed globally or available in the project
+- `--video <path>` — Path to video file (or `VIDEO_PATH` env)
+- `--title <text>` — Video title (or `VIDEO_TITLE` env)
+- `--desc <text>` — Video description (or `VIDEO_DESC` env)
+- `--tags <list>` — Comma-separated tags (or `VIDEO_TAGS` env)
+- `--cover <path>` — Cover image path (or `VIDEO_COVER` env)
+- `--privacy <mode>` — YouTube only: `public|unlisted|private` (default: `unlisted`)
+- `--headless` — Run browser in headless mode (default: **headed**)
 
-## Environment Variables
+## Running Multiple Platforms in Parallel
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VIDEO_PATH` | Yes | Path to the video file |
-| `VIDEO_TITLE` | Yes | Video title |
-| `VIDEO_DESC` | No | Video description |
-| `VIDEO_TAGS` | No | Comma-separated tags |
-| `VIDEO_COVER` | No | Path to cover image |
-| `VIDEO_PRIVACY` | No | YouTube only: `public` / `unlisted` / `private` |
-| `PVA_HEADLESS` | No | Set to `1` for headless mode |
+Login and upload tasks can run multiple platforms concurrently using shell backgrounding:
 
-## Usage
-
-### 1. Login (once per platform)
-
-```bash
-pva <platform> login
-```
-
-Supported platform identifiers:
-
-| Platform | Identifier |
-|----------|-----------|
-| Bilibili | `bilibili` |
-| Douyin | `douyin` |
-| Kuaishou | `kuaishou` |
-| Weixin Video | `weixin` |
-| YouTube | `youtube` |
-
-After login, the session is saved to `playwright/.auth/` for reuse.
-
-### 2. Upload Video
-
-Via CLI arguments:
+### Parallel Login
 
 ```bash
-pva <platform> upload \
-  --video ./video.mp4 \
-  --title "Video Title" \
-  --desc "Description text" \
-  --tags tag1,tag2
+pva douyin login &
+pva kuaishou login &
+wait
 ```
 
-Or via environment variables (useful when integrating with a rendering pipeline):
+### Parallel Upload
 
 ```bash
-export VIDEO_PATH=./output/final.mp4
-export VIDEO_TITLE="Today's Topic"
-export VIDEO_DESC="..."
-pva bilibili upload
+pva douyin upload --video ./video.mp4 --title "Title" &
+pva kuaishou upload --video ./video.mp4 --title "Title" &
+wait
 ```
 
-### 3. Batch Publishing
+### One headed, one headless (avoids window chaos)
 
 ```bash
-pva bilibili upload && pva douyin upload && pva kuaishou upload
+pva douyin upload --video ./video.mp4 --title "Title" --headless &
+pva kuaishou upload --video ./video.mp4 --title "Title" &
+wait
 ```
 
-## Workflow Integration Example
+### All headless
 
-As the publish step in an oral video pipeline:
-
+```bash
+pva douyin upload --video ./video.mp4 --title "Title" --headless &
+pva kuaishou upload --video ./video.mp4 --title "Title" --headless &
+wait
 ```
-Render complete → MP4 output → set VIDEO_PATH/VIDEO_TITLE → pva platform upload
-```
 
-## Notes
+## Important Notes
 
-- Each platform requires `login` once before first use
-- Weixin Video sessions expire quickly and may need daily re-login
-- Douyin requires manually checking the "content reflects personal opinion" declaration before publishing
-- `--headless` mode may fail on some platforms due to CAPTCHA or popups; headed mode is the default
-
-## References
-
-- [CLI Usage Guide](../../docs/cli-usage-guide.md)
-- [README](../../README.md)
+- **Default mode is headed** (visible browser). Only use `--headless` if explicitly requested.
+- Each `pva` process launches its own Playwright browser instance — no conflict between platforms.
+- Saved auth state is in `~/.local/share/mise/installs/node/22/lib/node_modules/@panda-video-automation/pva/playwright/.auth/`.
+- Login only needs to be done once; subsequent uploads reuse saved sessions.
+- `pva --help` for full CLI reference.
