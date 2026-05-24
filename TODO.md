@@ -1,0 +1,4 @@
+- [ ] Update npm package description & republish
+- [x] Add login status check command
+- [ ] Add more agent skills
+- [x] Support parallel multi-platform upload (multiple workers)
