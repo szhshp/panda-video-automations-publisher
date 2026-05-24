@@ -14,6 +14,11 @@
 
   > 🐼 [Panda Video Generator](https://github.com/szhshp/panda-video-generator) 的发布模块，独立为 npm 包，可单独使用或集成到自有流水线。
 
+  <div style="margin: 18px 0 6px;">
+    <a href="https://panda.szhshp.org/cli" title="PVA 官方网站" style="display: inline-block; padding: 12px 28px; border: 2px solid #0969da; border-radius: 8px; font-weight: 700; font-size: 1.1em; text-decoration: none; color: #fff; background: #0969da; margin: 0 8px;">🌐 官方网站</a>
+    <a href="https://www.npmjs.com/package/@panda-video-automation/pva" title="npm 包" style="display: inline-block; padding: 12px 28px; border: 2px solid #cb3837; border-radius: 8px; font-weight: 700; font-size: 1.1em; text-decoration: none; color: #fff; background: #cb3837; margin: 0 8px;">📦 npm 安装</a>
+  </div>
+
 </div>
 
 ---
