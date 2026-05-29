@@ -1,6 +1,6 @@
 {
   "name": "@panda-video-automation/pva",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Playwright-based video upload automation for Bilibili, Douyin, Kuaishou, Weixin Video, and YouTube",
   "bin": {
     "pva": "./bin/pva.mjs"
@@ -31,7 +31,8 @@
     "postinstall": "npx playwright install chromium"
   },
   "dependencies": {
-    "@playwright/test": "^1.58.0"
+    "@playwright/test": "^1.58.0",
+    "chalk": "^5.6.2"
   },
   "devDependencies": {
     "@types/node": "20.12.14",

@@ -1,15 +1,23 @@
 #!/usr/bin/env node
 
-import { spawnSync } from "child_process";
+import { spawnSync, execSync } from "child_process";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 import { createRequire } from "module";
+import { readFileSync } from "fs";
+import chalk from "chalk";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(__dirname, "..");
 
 const require = createRequire(import.meta.url);
 const PLAYWRIGHT_CLI = require.resolve("@playwright/test/cli");
+
+const { version: CURRENT_VERSION } = JSON.parse(
+  readFileSync(resolve(PROJECT_ROOT, "package.json"), "utf-8"),
+);
+
+const PKG_NAME = "@panda-video-automation/pva";
 
 // Platform mapping: CLI name -> directory name + auth key
 const PLATFORMS = {
@@ -48,6 +56,90 @@ function specFile(platform, action) {
 }
 
 /**
+ * Detect whether pva is installed globally.
+ */
+function isGlobalInstall() {
+  try {
+    const globalRoot = execSync("npm root -g", { encoding: "utf-8" }).trim();
+    return __dirname.startsWith(globalRoot);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Show current version (and optionally check npm for the latest).
+ */
+function showVersion(checkLatest) {
+  console.log(`${chalk.bold("pva")} ${chalk.yellow(`v${CURRENT_VERSION}`)}`);
+
+  if (checkLatest) {
+    try {
+      const latest = execSync(`npm view ${PKG_NAME} version`, {
+        encoding: "utf-8",
+        timeout: 10_000,
+      }).trim();
+      console.log(`${chalk.bold("Latest:")}   ${chalk.yellow(`v${latest}`)}`);
+
+      if (CURRENT_VERSION !== latest) {
+        console.log(
+          `\n${chalk.yellow("A new version is available!")} Run ${chalk.cyan('"pva upgrade"')} to update.`,
+        );
+      } else {
+        console.log(`\n${chalk.green("You're up to date!")}`);
+      }
+    } catch (err) {
+      console.error(`\n${chalk.red("Failed to check latest version:")} ${err.message}`);
+      process.exit(1);
+    }
+  }
+}
+
+/**
+ * Upgrade pva to the latest version via npm.
+ */
+function upgrade() {
+  const isGlobal = isGlobalInstall();
+  const spec = `${PKG_NAME}@latest`;
+
+  if (isGlobal) {
+    console.log(`${chalk.cyan.bold("[pva]")} Detected global install — running: ${chalk.cyan("npm install -g " + spec)}`);
+  } else {
+    console.log(`${chalk.cyan.bold("[pva]")} Detected local install — running: ${chalk.cyan("npm install " + spec)}`);
+  }
+
+  const npmArgs = isGlobal
+    ? ["install", "-g", spec]
+    : ["install", spec];
+
+  const result = spawnSync("npm", npmArgs, {
+    stdio: "inherit",
+    cwd: isGlobal ? undefined : PROJECT_ROOT,
+  });
+
+  if (result.status === 0) {
+    // Read the updated version
+    try {
+      const newVersion = execSync(`npm ls ${PKG_NAME} --json`, {
+        encoding: "utf-8",
+        timeout: 5_000,
+      });
+      const parsed = JSON.parse(newVersion);
+      const updatedVersion =
+        parsed.version ||
+        parsed?.dependencies?.[PKG_NAME]?.version ||
+        CURRENT_VERSION;
+      console.log(`\n${chalk.green("✅ pva has been updated to")} ${chalk.yellow(`v${updatedVersion}`)}${chalk.green("!")}`);
+    } catch {
+      console.log(`\n${chalk.green("✅ pva has been updated to the latest version!")}`);
+    }
+  } else {
+    console.error(`\n${chalk.red("❌ Upgrade failed.")}`);
+    process.exit(result.status ?? 1);
+  }
+}
+
+/**
  * Parse CLI arguments.
  */
 function parseArgs(argv) {
@@ -58,12 +150,27 @@ function parseArgs(argv) {
     process.exit(0);
   }
 
+  const cmd = args[0].toLowerCase();
+
+  // Top-level commands
+  if (cmd === "upgrade") {
+    return { command: "upgrade" };
+  }
+
+  if (cmd === "version") {
+    const checkLatest = args.includes("--check") || args.includes("-c");
+    return { command: "version", checkLatest };
+  }
+
+  // Legacy: <platform> <action> [options]
   if (args.length < 2) {
-    console.error("Error: Missing arguments. Usage: pva <platform> <action>");
+    console.error(
+      `${chalk.red("Error:")} Missing arguments. Usage: pva ${chalk.cyan("<platform>")} ${chalk.cyan("<action>")}`,
+    );
     process.exit(1);
   }
 
-  let rawPlatform = args[0].toLowerCase();
+  let rawPlatform = cmd;
   const action = args[1].toLowerCase();
   const extra = args.slice(2);
 
@@ -72,15 +179,15 @@ function parseArgs(argv) {
 
   // Validate platform
   if (!PLATFORMS[rawPlatform]) {
-    console.error(`Error: Unknown platform "${rawPlatform}".`);
-    console.error(`Valid platforms: ${Object.keys(PLATFORMS).join(", ")}`);
+    console.error(`${chalk.red("Error:")} Unknown platform "${rawPlatform}".`);
+    console.error(`Valid platforms: ${Object.keys(PLATFORMS).map((p) => chalk.cyan(p)).join(", ")}`);
     process.exit(1);
   }
 
   // Validate action
   if (!ACTIONS.includes(action)) {
     console.error(
-      `Error: Unknown action "${action}". Use "login" or "upload".`,
+      `${chalk.red("Error:")} Unknown action "${action}". Use ${chalk.cyan('"login"')} or ${chalk.cyan('"upload"')}.`,
     );
     process.exit(1);
   }
@@ -112,7 +219,7 @@ function parseArgs(argv) {
           env.PVA_HEADLESS = "1";
           break;
         default:
-          console.error(`Error: Unknown option "${extra[i]}".`);
+          console.error(`${chalk.red("Error:")} Unknown option "${extra[i]}".`);
           process.exit(1);
       }
     }
@@ -123,40 +230,62 @@ function parseArgs(argv) {
 
 function printHelp() {
   console.log(`
-Usage: pva <platform> <action> [options]
+${chalk.bold("Usage:")} pva ${chalk.cyan("<command>")} [options]
 
-Platforms: bilibili, douyin, kuaishou, weixin, youtube
-Actions:   login, upload
+${chalk.bold("Commands:")}
+  ${chalk.cyan("upgrade")}               Upgrade pva to the latest version
+  ${chalk.cyan("version")}               Show current version
+  ${chalk.cyan("version --check")} (-c)  Check latest version on npm
 
-Aliases:
-  weixinvideo, wechat -> weixin
-  yt -> youtube
+  ${chalk.cyan("<platform>")} ${chalk.cyan("<action>")}   Run automation (e.g., bilibili login)
 
-Upload options:
-  --video <path>    Path to video file (or VIDEO_PATH env)
-  --title <text>    Video title (or VIDEO_TITLE env)
-  --desc <text>     Video description (or VIDEO_DESC env)
-  --tags <list>     Comma-separated tags (or VIDEO_TAGS env)
-  --cover <path>    Cover image path (or VIDEO_COVER env)
-  --privacy <mode>  YouTube: public|unlisted|private (default: unlisted)
-  --headless        Run browser in headless mode (default: headed)
+${chalk.bold("Platforms:")} ${chalk.cyan("bilibili")}, ${chalk.cyan("douyin")}, ${chalk.cyan("kuaishou")}, ${chalk.cyan("weixin")}, ${chalk.cyan("youtube")}
+${chalk.bold("Actions:")}   login, upload
 
-Examples:
-  pva bilibili login
-  pva youtube upload --video ./video.mp4 --title "My Video"
-  pva douyin upload --title "Hello" --tags tag1,tag2
+${chalk.bold("Aliases:")}
+  weixinvideo, wechat ${chalk.dim("->")} weixin
+  yt ${chalk.dim("->")} youtube
+
+${chalk.bold("Upload options:")}
+  ${chalk.cyan("--video <path>")}    Path to video file (or VIDEO_PATH env)
+  ${chalk.cyan("--title <text>")}    Video title (or VIDEO_TITLE env)
+  ${chalk.cyan("--desc <text>")}     Video description (or VIDEO_DESC env)
+  ${chalk.cyan("--tags <list>")}     Comma-separated tags (or VIDEO_TAGS env)
+  ${chalk.cyan("--cover <path>")}    Cover image path (or VIDEO_COVER env)
+  ${chalk.cyan("--privacy <mode>")}  YouTube: public|unlisted|private (default: unlisted)
+  ${chalk.cyan("--headless")}        Run browser in headless mode (default: headed)
+
+${chalk.bold("Examples:")}
+  pva ${chalk.cyan("upgrade")}
+  pva ${chalk.cyan("version --check")}
+  pva ${chalk.cyan("bilibili login")}
+  pva ${chalk.cyan('youtube upload --video ./video.mp4 --title "My Video"')}
 `);
 }
 
 function main() {
-  const { platform, action, env } = parseArgs(process.argv);
+  const parsed = parseArgs(process.argv);
+
+  // Handle top-level commands
+  if (parsed.command === "upgrade") {
+    upgrade();
+    return;
+  }
+
+  if (parsed.command === "version") {
+    showVersion(parsed.checkLatest);
+    return;
+  }
+
+  // Legacy automation flow
+  const { platform, action, env } = parsed;
   const info = PLATFORMS[platform];
   const spec = specFile(platform, action);
   const headed = env.PVA_HEADLESS ? "" : "--headed";
 
-  console.log(`[pva] Platform: ${info.dir}`);
-  console.log(`[pva] Action:   ${action}`);
-  console.log(`[pva] Spec:     ${spec}`);
+  console.log(`${chalk.cyan.bold("[pva]")} Platform: ${chalk.bold(info.dir)}`);
+  console.log(`${chalk.cyan.bold("[pva]")} Action:   ${chalk.bold(action)}`);
+  console.log(`${chalk.cyan.bold("[pva]")} Spec:     ${spec}`);
 
   const args = [
     PLAYWRIGHT_CLI,

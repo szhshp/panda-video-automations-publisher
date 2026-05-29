@@ -86,10 +86,22 @@ pva youtube upload --video ./demo.mp4 --title "我的视频"
 ## 📖 CLI 参考
 
 ```
-pva <platform> <action> [options]
+pva <command> [options]
 ```
 
-### 平台列表
+### 全局命令
+
+| 命令 | 说明 |
+|------|------|
+| `version` | 显示当前版本号 |
+| `version --check` / `-c` | 检查 npm 上的最新版本 |
+| `upgrade` | 自动检测全局/本地安装并升级到最新版本 |
+
+### 平台命令
+
+`pva <platform> <action> [options]`
+
+#### 平台列表
 
 | 平台 | 标识符 | 别名 |
 |------|--------|------|
@@ -123,6 +135,13 @@ pva <platform> <action> [options]
 ### 示例
 
 ```bash
+# 查看版本
+pva version
+pva version --check       # 检查 npm 最新版本
+
+# 升级
+pva upgrade               # 自动检测全局/本地安装并升级
+
 # 登录
 pva douyin login
 
