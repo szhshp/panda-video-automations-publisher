@@ -416,8 +416,12 @@ test('upload video to bilibili', async ({ page }) => {
   // Step 6: Wait for video processing
   await page.waitForTimeout(10000);
 
+  // Step 7: Handle creation declaration — Bilibili requires a content declaration
+  // before publishing (e.g. "personal opinion, for reference only")
+  await page.getByRole('textbox', { name: '请选择符合您视频内容的创作声明' }).click();
+  await page.getByText('个人观点，仅供参考').click();
 
-  // Step 7: Click submit button
+  // Step 8: Click submit button
   await page.waitForTimeout(2000);
 
   // Scroll to bottom to ensure submit button is visible
