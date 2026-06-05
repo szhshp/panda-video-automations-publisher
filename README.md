@@ -7,10 +7,20 @@
 
   *"One CLI to publish everywhere."*
 
-  [![npm version](https://img.shields.io/npm/v/@panda-video-automation/pva)](https://www.npmjs.com/package/@panda-video-automation/pva)
-  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
-  [![Playwright](https://img.shields.io/badge/Playwright-latest-45ba4b)](https://playwright.dev/)
+  <p>
+    <a href="https://www.npmjs.com/package/@panda-video-automation/pva">
+      <img src="https://img.shields.io/npm/v/@panda-video-automation/pva?style=for-the-badge&logo=npm&color=cb3837" alt="npm version">
+      <img src="https://img.shields.io/npm/dm/@panda-video-automation/pva?style=for-the-badge&logo=npm&color=cb3837" alt="npm downloads">
+    </a>
+    <a href="https://github.com/szhshp/panda-video-automations-publisher">
+      <img src="https://img.shields.io/github/stars/szhshp/panda-video-automations-publisher?style=for-the-badge&logo=github&color=black" alt="GitHub stars">
+    </a>
+  </p>
+  <p>
+    [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+    [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
+    [![Playwright](https://img.shields.io/badge/Playwright-latest-45ba4b)](https://playwright.dev/)
+  </p>
 
   > 🐼 [Panda Video Generator](https://github.com/szhshp/panda-video-generator) 的发布模块，独立为 npm 包，可单独使用或集成到自有流水线。
 
