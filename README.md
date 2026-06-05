@@ -12,9 +12,6 @@
       <img src="https://img.shields.io/npm/v/@panda-video-automation/pva?style=for-the-badge&logo=npm&color=cb3837" alt="npm version">
       <img src="https://img.shields.io/npm/dm/@panda-video-automation/pva?style=for-the-badge&logo=npm&color=cb3837" alt="npm downloads">
     </a>
-    <a href="https://github.com/szhshp/panda-video-automations-publisher">
-      <img src="https://img.shields.io/github/stars/szhshp/panda-video-automations-publisher?style=for-the-badge&logo=github&color=black" alt="GitHub stars">
-    </a>
   </p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
@@ -24,10 +21,14 @@
 
   > 🐼 [Panda Video Generator](https://github.com/szhshp/panda-video-generator) 的发布模块，独立为 npm 包，可单独使用或集成到自有流水线。
 
-  <div style="margin: 18px 0 6px;">
-    <a href="https://panda.szhshp.org/cli" title="PVA 官方网站" style="display: inline-block; padding: 12px 28px; border: 2px solid #0969da; border-radius: 8px; font-weight: 700; font-size: 1.1em; text-decoration: none; color: #fff; background: #0969da; margin: 0 8px;">🌐 官方网站</a>
-    <a href="https://www.npmjs.com/package/@panda-video-automation/pva" title="npm 包" style="display: inline-block; padding: 12px 28px; border: 2px solid #cb3837; border-radius: 8px; font-weight: 700; font-size: 1.1em; text-decoration: none; color: #fff; background: #cb3837; margin: 0 8px;">📦 npm 安装</a>
-  </div>
+  <p>
+    <a href="https://panda.szhshp.org/cli">
+      <img src="https://img.shields.io/badge/%F0%9F%8C%90%20%E5%AE%98%E6%96%B9%E7%BD%91%E7%AB%99-0969da?style=for-the-badge" alt="官方网站">
+    </a>
+    <a href="https://www.npmjs.com/package/@panda-video-automation/pva">
+      <img src="https://img.shields.io/badge/%F0%9F%93%A6%20npm%20%E5%AE%89%E8%A3%85-cb3837?style=for-the-badge&logo=npm&logoColor=white" alt="npm 安装">
+    </a>
+  </p>
 
 </div>
 
