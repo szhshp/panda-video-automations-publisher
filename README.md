@@ -9,8 +9,8 @@
 
   <p>
     <a href="https://www.npmjs.com/package/@panda-video-automation/pva">
-      <img src="https://img.shields.io/npm/v/@panda-video-automation/pva?style=for-the-badge&logo=npm&color=cb3837" alt="npm version">
-      <img src="https://img.shields.io/npm/dm/@panda-video-automation/pva?style=for-the-badge&logo=npm&color=cb3837" alt="npm downloads">
+      <img src="https://img.shields.io/npm/v/@panda-video-automation/pva?logo=npm&color=cb3837" alt="npm version">
+      <img src="https://img.shields.io/npm/dm/@panda-video-automation/pva?logo=npm&color=cb3837" alt="npm downloads">
     </a>
   </p>
   <p>
