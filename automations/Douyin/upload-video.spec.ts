@@ -362,55 +362,41 @@ test('upload video to douyin', async ({ page }) => {
     }
   }
 
+
+
+
+
   // Step 6: Upload cover if provided
   if (config.coverPath && existsSync(config.coverPath)) {
     console.log(`🖼️  Uploading cover: ${config.coverPath}`);
+    await page.waitForTimeout(3000);
+
+    // Scroll to cover area first (typically below the video preview)
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(2000);
 
-    const coverSelectors = [
-      'input[type="file"][accept*="image"]',
-      '[class*="cover-upload"] input',
-      '[class*="CoverUpload"] input',
-      '[class*="cover"] input[type="file"]',
-      '[class*="thumbnail"] input[type="file"]',
-      'button:has-text("上传封面")',
-      'button:has-text("选择封面")',
-    ];
+    // Click "选择封面" to open the cover picker dialog
+    await page.getByText('选择封面').first().click();
+    await page.waitForTimeout(1000);
 
-    let coverUploaded = false;
-    for (const selector of coverSelectors) {
-      try {
-        if (selector.includes('button')) {
-          const button = page.locator(selector).first();
-          if (await button.isVisible({ timeout: 2000 })) {
-            const [fileChooser] = await Promise.all([
-              page.waitForEvent('filechooser', { timeout: 5000 }),
-              button.click(),
-            ]);
-            await fileChooser.setFiles(config.coverPath);
-            console.log('✅ Cover uploaded via button');
-            coverUploaded = true;
-            await page.waitForTimeout(2000);
-            break;
-          }
-        } else {
-          const coverInput = page.locator(selector).first();
-          if (await coverInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-            await coverInput.setInputFiles(config.coverPath);
-            console.log(`✅ Cover uploaded using selector: ${selector}`);
-            coverUploaded = true;
-            await page.waitForTimeout(2000);
-            break;
-          }
-        }
-      } catch (e) {
-        // Continue
-      }
-    }
+    // Click the upload icon to activate the cover file input inside the dialog,
+    // then intercept with file chooser to set the file programmatically
+    const [fileChooser] = await Promise.all([
+      page.waitForEvent('filechooser', { timeout: 8000 }),
+      page.locator('.semi-upload-drag-area-icon > .semi-icons').click(),
+    ]);
+    await fileChooser.setFiles(config.coverPath);
+    await page.waitForTimeout(2000);
 
-    if (!coverUploaded) {
-      console.log('⚠️  Cover upload input not found automatically. Please upload manually.');
-    }
+    // Confirm portrait cover orientation
+    await page.getByRole('button', { name: '设置竖封面' }).click();
+    await page.waitForTimeout(1000);
+
+    // Complete the cover selection
+    await page.getByRole('button', { name: '完成' }).click();
+    await page.waitForTimeout(2000);
+
+    console.log('✅ Cover uploaded successfully via Douyin cover dialog');
   }
 
   // Step 7: Wait for video processing
@@ -445,7 +431,6 @@ test('upload video to douyin', async ({ page }) => {
   }
 
   // Step 8: Required declaration + publish
-  // Open 自主声明 picker, then select "内容为个人观点或见解" before 发布 is allowed.
   console.log('');
   console.log('📝 Video upload/form filling completed!');
   console.log('☑️  Opening self-declaration and selecting "内容为个人观点或见解"...');
