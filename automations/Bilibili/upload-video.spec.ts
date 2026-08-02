@@ -273,7 +273,7 @@ test('upload video to bilibili', async ({ page }) => {
     console.log(`Uploading cover: ${config.coverPath}`);
 
     // Click on "封面设置" to open cover editor panel
-    await page.locator('div').filter({ hasText: /^封面设置$/ }).nth(1).click();
+    await page.getByText('添加封面').click();
     await page.waitForTimeout(2000);
 
     // Wait for cover editor panel to appear

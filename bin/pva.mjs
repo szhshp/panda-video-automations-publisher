@@ -291,6 +291,10 @@ function main() {
     PLAYWRIGHT_CLI,
     "test",
     spec,
+    // Force pva's own shipped config so testDir stays ./dist/automations even when
+    // the calling project overrides playwright.config.mjs to point at source.
+    "--config",
+    resolve(PROJECT_ROOT, "playwright.config.mjs"),
     "--project=chromium",
     headed,
   ].filter(Boolean);

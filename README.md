@@ -244,6 +244,23 @@ pnpm upload:all
 
 ---
 
+## 📜 更新历史
+
+- **v0.1.11**
+  - 修复 Bilibili 封面上传
+  - 迁移 skill 至 `.claude`
+  - 修复跨项目路径j
+- **v0.1.9**
+  - Bilibili 上传新增创作声明步骤
+- **v0.1.7**
+  - 新增 `pva version` / `pva upgrade` 命令
+- **v0.1.6**
+  - 五平台登录/上传
+  - agent skill
+  - 支持全局 npm 安装
+
+---
+
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request! 
