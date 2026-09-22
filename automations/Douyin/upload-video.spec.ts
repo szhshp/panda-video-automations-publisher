@@ -547,37 +547,18 @@ test('upload video to douyin', async ({ page }) => {
     console.log('💡 Pausing for manual review - please click submit button manually');
     await page.pause();
   } else {
-    // Wait for submission to complete
-    console.log('⏳ Waiting for submission to complete...');
-    await page.waitForTimeout(5000);
-
-    // Check for success indicators
-    const successSelectors = [
-      'text=发布成功',
-      'text=提交成功',
-      'text=上传成功',
-      '[class*="success"]',
-      '[class*="Success"]',
-    ];
-
-    let submissionSuccess = false;
-    for (const selector of successSelectors) {
-      try {
-        const element = page.locator(selector).first();
-        if (await element.isVisible({ timeout: 5000 })) {
-          submissionSuccess = true;
-          console.log('✅ Submission successful!');
-          break;
-        }
-      } catch (e) {
-        // Continue
-      }
-    }
-
-    if (!submissionSuccess) {
-      console.log('Success: Douyin (check manually)');
-    } else {
+    // Douyin redirects to the content-manage page once the work is published,
+    // so leaving /content/upload IS the publish confirmation. The previous
+    // toast scan slept 5s after the click and always missed the transient
+    // toast, which is why every run fell back to "(check manually)".
+    console.log('⏳ Waiting for redirect to the content manage page...');
+    try {
+      await page.waitForURL(/creator-micro\/content\/manage/, { timeout: 60000 });
+      console.log(`✅ Redirected to content manage page: ${page.url()}`);
       console.log('Success: Douyin');
+    } catch (e) {
+      console.log(`⚠️  No redirect after 60s, still on: ${page.url()}`);
+      console.log('Success: Douyin (check manually)');
     }
   }
 });
