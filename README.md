@@ -34,6 +34,23 @@
 
 ---
 
+<a id="ai-quick-start"></a>
+## 🤖 Agent 快速接入
+
+> [!TIP]
+> 无需通读文档。将以下指令发送给你的 AI Agent（Claude Code、Cursor 或任意 MCP Agent），即可自动完成依赖安装、登录态建立与视频上传。
+
+```markdown
+1. 使用 npm 安装 `@panda-video-automation/pva`
+2. 检查 pva 的安装
+3. 使用 pva 帮我登录 {平台名称}
+4. 使用 pva 帮我上传视频 {视频路径} 标题= {标题文本} 描述= {描述文本}
+```
+
+> <mark>执行流程：</mark> 安装依赖 → 校验安装 → 平台登录 → 视频上传
+
+---
+
 ## ✨ 核心特性
 
 <table cellspacing="16" cellpadding="0" border="0">
@@ -67,15 +84,6 @@
 ---
 
 ## 🚀 快速开始
-
-### 使用 AI 帮你操作
-
-最简单的使用方式: 给你的 AI Agent 发送以下文字: 
-
-1. 使用 npm 安装 `@panda-video-automation/pva`
-2. 检查 pva 的安装
-3. 使用 pva 帮我登录 {平台名称}
-4. 使用 pva 帮我上传视频 {视频路径} 标题= {标题文本} 描述= {描述文本} 
 
 ### 手动安装
 
@@ -130,6 +138,9 @@ pva <command> [options]
 | 快手 | `kuaishou` | |
 | 微信视频号 | `weixin` | `weixinvideo` , `wechat` |
 | YouTube | `youtube` | `yt` |
+| ~~小红书~~ | ~~`xiaohongshu`~~ | ~~`redbook` , `xhs`~~ |
+
+> <mark>注：</mark> 小红书平台因~~逼事特别多禁止用户使用自动化, 祝愿他们早日倒闭~~上传流程过于严格, 永久取消支持.
 
 ### 操作
 
